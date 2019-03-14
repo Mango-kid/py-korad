@@ -1,4 +1,5 @@
-# py-korad: **Korad Test & Measurment Equipment Python Library**
+# **py-korad**: Korad Test & Measurment Equipment Python Library
+[![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-370/)
 
 This is the start of a reposistory to unify the Korad device drivers into a single repository. This is currently under development and notes will be shown below on what support is currently avalible.
 
