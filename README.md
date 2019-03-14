@@ -9,7 +9,7 @@ This is the start of a reposistory to unify the Korad device drivers into a sing
 - USB Interface: WIP
 
 ## KA P Series Power Supplies (ie. KA6003P)
-I will most likley pull this from on of the existing Korad Serial libraries.
+I will most likley pull this from one of the existing Korad Serial libraries.
 
 ## KD P Series Power Supplies
 Once I have compaired the SCPI command set between this device and the KA series hopefully we will just be able to unify these into a single class. 
