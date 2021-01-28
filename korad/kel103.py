@@ -98,6 +98,15 @@ class kel103(object):
             self.device.udpSend(':INP 0')
             if self.checkOutput() != state:
                 raise ValueError('Caution: Output not set')
+                
+    def setConstantCurrent(self):
+        self.device.udpSend(':FUNC CC')
 
+    def setConstantPower(self):
+        self.device.udpSend(':FUNC CW')
+        
+    def setConstantResistance(self):
+        self.device.udpSend(':FUNC CR')
+        
     def endComm(self):
         self.device.close()
