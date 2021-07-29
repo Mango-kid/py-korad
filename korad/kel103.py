@@ -65,9 +65,27 @@ class kel103(object):
         s = self.device.udpSendRecv(':MEAS:VOLT?')
         return float(s.strip('V\n'))
     
+    def measureSetVolt(self):
+        s = self.device.udpSendRecv(':VOLT?')
+        return float(s.strip('V\n'))
+
+    def setVolt(self, voltage):
+        s = self.device.udpSend(':VOLT ' + str(voltage) + 'V')
+        if self.measureSetVolt() != voltage:
+            raise ValueError('Voltage set incorectly on the device')
+
     def measurePower(self):
         s = self.device.udpSendRecv(':MEAS:POW?')
         return float(s.strip('W\n'))
+
+    def measureSetPower(self):
+        s = self.device.udpSendRecv(':POW?')
+        return float(s.strip('W\n'))
+
+    def setPower(self, power):
+        s = self.device.udpSend(':POW ' + str(power) + 'W')
+        if self.measureSetPower() != power:
+            raise ValueError('Power set incorectly on the device')
 
     def measureCurrent(self):
         s = self.device.udpSendRecv(':MEAS:CURR?')
