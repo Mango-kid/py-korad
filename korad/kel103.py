@@ -1,9 +1,5 @@
 import socket
 import time
-import re
-import matplotlib
-import matplotlib.pyplot as plt
-import numpy as np
 
 class koradUdpComm(object):
 
@@ -125,6 +121,28 @@ class kel103(object):
         
     def setConstantResistance(self):
         self.device.udpSend(':FUNC CR')
+
+    def setDynamicModeCV(self, voltage1, voltage2, freq, dutycycle):
+        cmd = ':DYN 1,'
+        cmd += '%.3fV,' % voltage1
+        cmd += '%.3fV,' % voltage2
+        cmd += '%.3fHZ,' % freq
+        cmd += '%.3f%%' % dutycycle
+        s = self.device.udpSend(cmd)
+
+    def setDynamicModeCC(self, slope1, slope2, current1, current2, freq, dutycycle):
+        cmd = ':DYN 2,'
+        cmd += '%.3fA/uS,' % slope1
+        cmd += '%.3fA/uS,' % slope2
+        cmd += '%.3fA,' % current1
+        cmd += '%.3fA,' % current2
+        cmd += '%.3fHZ,' % freq
+        cmd += '%.3f%%' % dutycycle
+        s = self.device.udpSend(cmd)
+
+    def getDynamicMode(self):
+        s = self.device.udpSendRecv(':DYN?')
+        return s.strip('\n')
         
     def endComm(self):
         self.device.close()
