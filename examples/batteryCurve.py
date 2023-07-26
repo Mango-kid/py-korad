@@ -1,6 +1,7 @@
-"""This sample program will use the kel103 to test a batteries capacity and 
-show this information in matplotlib. This method is an aproximation and its resolution
-can be increase with sampling rate. 
+"""
+This sample program will use the kel103 to test a battery's capacity and
+show this information in matplotlib. This method is an aproximation and its
+resolution can be increased with sampling rate.
 """
 import socket
 import time
@@ -20,7 +21,7 @@ kel = kel103.kel103("192.168.8.126", "192.168.8.128", 18190)
 kel.checkDevice()
 
 # a quick battery test
-kel.setOutput(False)        
+kel.setOutput(False)
 voltage = kel.measureVolt()
 kel.setCurrent(dischargeRate)
 voltageData = []
@@ -42,7 +43,7 @@ while voltage > cutOffVoltage:
         voltageData.append(voltage)
         # Only append the timedata when volt/current measurements went fine.
         # This is because the voltage or current measurement could fail
-        # and then the x and y-axis would have different dimentions
+        # and then the x and y-axis would have different dimensions
         timeData.append(current_time)
 
         # solve the current stuff as a running accumulation
@@ -65,8 +66,9 @@ kel.endComm()
 fig, ax = plt.subplots()
 ax.plot(timeData, voltageData)
 
-ax.set(xlabel='time (s)', ylabel='voltage (V DC)',
-    title='Battery Discharge Test {}A: {:.4f}Ah'.format(dischargeRate, capacity))
+ax.set(xlabel='time (s)',
+       ylabel='voltage (V DC)',
+       title='Battery Discharge Test {}A: {:.4f}Ah'.format(dischargeRate, capacity))
 ax.grid()
 
 fig.savefig("test_" + str(time.time()) + ".png")
