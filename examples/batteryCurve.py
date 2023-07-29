@@ -3,7 +3,7 @@ This sample program will use the kel103 to test a battery's capacity and
 show this information in matplotlib. This method is an aproximation and its
 resolution can be increased with sampling rate.
 """
-import socket
+
 import time
 import re
 import matplotlib
@@ -17,7 +17,10 @@ dischargeRate = 5.0
 MISSED_LIMIT = 10 # amount of missed samples that is allowed
 
 # setup the device (the IP of your ethernet/wifi interface, the IP of the Korad device)
-kel = kel103.kel103("192.168.8.126", "192.168.8.128", 18190)
+host_ip = "192.168.x.x"
+device_ip = "192.168.x.x"
+port = 18190
+kel = kel103.kel103(host_ip, device_ip, port)
 kel.checkDevice()
 
 # a quick battery test
@@ -34,24 +37,29 @@ kel.setOutput(True)
 startTime = time.time()
 missedSuccessiveSamples = 0
 
+fileBasename = f"test_{time.time()}"
+
 while voltage > cutOffVoltage:
     try:
         # store the time before measuring volt/current
-        current_time = (time.time() - startTime)
+        currentTime = (time.time() - startTime)
         voltage = kel.measureVolt()
         current = kel.measureCurrent()
         voltageData.append(voltage)
         # Only append the timedata when volt/current measurements went fine.
         # This is because the voltage or current measurement could fail
         # and then the x and y-axis would have different dimensions
-        timeData.append(current_time)
+        timeData.append(currentTime)
 
         # solve the current stuff as a running accumulation
-        capacity = ((startTime - time.time()) / 60 / 60) * current
+        capacity = ((time.time() - startTime) / 3600) * current
 
-        print("Voltage: " + str(voltage) + " V DC, Capacity: " + str(capacity) + " Ah")
-        time.sleep(0.25)
+        print(f"Voltage: {voltage:.3f} V DC, Capacity: {capacity:.3f} Ah")
+        time.sleep(1.0)
         missedSuccessiveSamples = 0
+
+        with open(f'{fileBasename}.txt', 'a') as f:
+          f.write(f"{currentTime} {voltage}\n")
     except Exception as e:
         print(e)
         missedSuccessiveSamples += 1
@@ -68,8 +76,8 @@ ax.plot(timeData, voltageData)
 
 ax.set(xlabel='time (s)',
        ylabel='voltage (V DC)',
-       title='Battery Discharge Test {}A: {:.4f}Ah'.format(dischargeRate, capacity))
+       title=f'Battery Discharge Test {dischargeRate:.3f}A: {capacity:.4f}Ah')
 ax.grid()
 
-fig.savefig("test_" + str(time.time()) + ".png")
+fig.savefig(f"{fileBasename}.png")
 plt.show()
