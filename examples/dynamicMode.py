@@ -4,7 +4,10 @@ from korad import kel103
 # 1st param: the IP of your ethernet/wifi interface
 # 2nd param: the IP of the Korad device
 # 3rd param: the port of the Korad device (18190 = default)
-kel = kel103.kel103("192.168.2.28", "192.168.7.183", 18190)
+host_ip = "192.168.x.x"
+device_ip = "192.168.x.x"
+port = 18190
+kel = kel103.kel103(host_ip, device_ip, port)
 
 print("Connecting to device..")
 try:
