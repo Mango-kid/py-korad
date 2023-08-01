@@ -1,3 +1,4 @@
+import re
 import socket
 import time
 
@@ -26,7 +27,7 @@ class koradUdpComm(object):
             sent = self.sock.sendto(messageb, self.deviceAddress)
             self.sock.settimeout(1.0)
             data, server = self.sock.recvfrom(1024)
-            if len(data) > 0:
+            if data:
                 return data.decode('utf-8')
 
             if time.time() - startTime > 3:
@@ -65,7 +66,7 @@ class kel103(object):
     def setDhcp(self, state):
         if state:
             self.device.udpSend(':SYST:DHCP 1')
-        else: 
+        else:
             self.device.udpSend(':SYST:DHCP 0')
 
     def ipAddress(self):
@@ -241,10 +242,44 @@ class kel103(object):
         cmd += '%.3fA,' % current2
         cmd += '%.3fHZ,' % freq
         cmd += '%.3f%%' % dutycycle
-        s = self.device.udpSend(cmd)
+        self.device.udpSend(cmd)
 
     def getDynamicMode(self):
         return self.device.udpSendRecv(':DYN?').strip() == "ON"
+
+
+    def setBatteryTestParams(self, group, currentRange, dischargeCurrent, cutOffVoltage, cutOffCapacity, time_minutes):
+        """
+        set battery test params.  This also activates the group such that the test can be started without calling 'setBatteryTestGroup'.
+        """
+        if not group in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]:
+            raise ValueError(f"There are only groups from 1 through 10.")
+        self.device.udpSend(f':BATT {group},{currentRange:.2f}A,{dischargeCurrent:.2f}A,{cutOffVoltage:.2f}V,{cutOffCapacity:.2f}AH,{time_minutes:.2f}M')
+
+    def setBatteryTestGroup(self, group):
+        """
+        select storage group of battery test
+        """
+        if not group in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]:
+            raise ValueError(f"There are only groups from 1 through 10.")
+        self.device.udpSend(f':RCL:BATT {group}')
+
+    def batteryTestParams(self):
+        s = self.device.udpSendRecv(f':RCL:BATT?')
+        vals = [float(v) for v in re.findall(r'\d+\.\d*', s)]
+        return f'current range: {vals[0]:.2f}A, discharge current: {vals[1]:.2f}A, cut-off voltage: {vals[2]:.2f}V, cut-off capacity: {vals[3]:.2f}Ah, cut-off time: {vals[4]:.2f}min'
+
+    def batteryTestTime(self):
+        """
+        get passed time of current battery test
+        """
+        return float(self.device.udpSendRecv(':BATT:TIM?').strip('M\n'))
+
+    def batteryTestCapacity(self):
+        """
+        get capacity of current battery test
+        """
+        return float(self.device.udpSendRecv(':BATT:CAP?').strip('AH\n'))
 
     def getBeep(self):
         return self.device.udpSendRecv(':SYST:BEEP?').strip() == "ON"
