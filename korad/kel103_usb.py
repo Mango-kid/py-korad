@@ -18,7 +18,6 @@ class koradUSBComm(object):
             sio.flush()
             sOut = ser.readline()
             ser.close
-            #sys.stdout.write('Voltage: ' + sOut.decode('ASCII').strip('V\n'))
             return sOut.decode('utf-8')
 
     def udpSend(self, message):
