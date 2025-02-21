@@ -7,9 +7,9 @@ This is the start of a reposistory to unify the Korad device drivers into a sing
 
 **Check out the Wiki for more info**
 
-## KEL103 30A 120V DC Electronic Load
+## KEL103 30A 120V DC Electronic Load / Tenma 72-132XX DC Electronic Load
 - Ethernet Interface: Currently a work in progress with many features tested and working
-- USB Interface: WIP
+- USB Interface: Separate USB class added - tested with batteryCurve only.
 
 ## KA P Series Power Supplies (ie. KA6003P)
 I will most likley pull this from one of the existing Korad Serial libraries.
